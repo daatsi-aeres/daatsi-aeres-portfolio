@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Siddharth Rama Sushil — Robotics, Perception, Reinforcement Learning</title>
+
+  <!-- SEO & Social -->
+  <meta name="description" content="Siddharth Rama Sushil — Robotics engineer specializing in SLAM, visual–inertial navigation, 6-DoF pose estimation and sim-to-real reinforcement learning." />
+  <meta property="og:title" content="Siddharth Rama Sushil — Robotics, Perception, Reinforcement Learning" />
+  <meta property="og:description" content="Robotics engineer focusing on SLAM, pose estimation, semantic segmentation and sim-to-real RL. Based in San Diego, CA." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/assets/dp.jpg?v=20250919" />
+  <link rel="icon" href="/assets/favicon.ico" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+
+  <!-- Feather icons -->
+  <script src="https://unpkg.com/feather-icons" defer></script>
+
+  <style>
+    /* Design tokens */
+    :root{
+      --cream: #F6F1E6;    /* page background */
+      --khaki: #BDB27A;    /* badges / secondary backgrounds */
+      --brown: #3E2F2F;    /* primary dark */
+      --text: #2f2323;     /* slightly darker for contrast */
+      --sand:  #E9E2C8;    /* panels / soft borders */
+      --accent: #C69C6D;   /* buttons & small accents */
+
+      /* type scale */
+      --fs-h1: 2.6rem; --fs-h2:1.6rem; --fs-body:1rem; --leading-body:1.65;
+      --radius-sm:8px; --radius-lg:14px;
+      --motion-fast: 160ms; --motion-med: 300ms;
+    }
+
+    @media(min-width:1000px){ :root{ --fs-h1:3.6rem; --fs-h2:2rem; --fs-body:1.02rem; } }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Space Grotesk', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:var(--cream);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      font-size:var(--fs-body);
+      line-height:var(--leading-body);
+    }
+
+    /* Container helper to keep consistent gutters */
+    .container{ max-width:1120px; margin:0 auto; padding:0 24px; }
+
+    /* Small utilities */
+    .nav-link { position: relative; display:inline-block; padding:6px 2px; }
+    .nav-link:after {
+      content: '';
+      position: absolute;
+      height: 2px;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      background: var(--accent);
+      transition: width var(--motion-fast) ease;
+      border-radius:2px;
+    }
+    .nav-link:hover:after, .nav-link:focus-within:after { width: 100%; }
+
+    /* Project card hover */
+    .project-card { transition: transform var(--motion-fast), box-shadow var(--motion-fast); border-radius:var(--radius-lg); overflow:hidden; }
+    .project-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(62,47,47,0.08); }
+
+    /* Top fold configuration: try to fit into viewport */
+    .hero-fold { min-height: calc(100vh - 72px); display: grid; place-items: center; }
+
+    /* Portrait */
+    .portrait {
+      width:520px;
+      height:420px;
+      object-fit:cover;
+      border-radius:14px;
+      border:6px solid var(--sand);
+      box-shadow: 0 20px 48px rgba(62,47,47,0.11);
+      display:block;
+    }
+
+    /* Responsive portrait scaling */
+    @media (max-width: 1000px) { .portrait { width:420px; height:340px; } .hero-title { font-size:2.6rem; } }
+    @media (max-width: 760px) { .portrait { width:340px; height:260px; border-radius:12px; } .hero-title { font-size:1.7rem; } }
+    @media (max-width:420px) { .portrait { width:280px; height:200px; } .hero-title { font-size:1.5rem; } }
+
+    /* Education timeline line for desktop only */
+    .edu-line { display:none; }
+    @media (min-width:768px) { .edu-line { display:block; position:absolute; left:18%; right:18%; top:50%; height:2px; background: rgba(62,47,47,0.06); transform: translateY(-50%); z-index:0; } }
+
+    /* Slight translucent panels */
+    .panel {
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(62,47,47,0.05);
+      backdrop-filter: blur(6px);
+      border-radius:var(--radius-lg);
+    }
+
+    /* Buttons */
+    .btn{ display:inline-flex; align-items:center; gap:.6rem; border-radius:10px; padding:.6rem 1rem; font-weight:600; }
+    .btn-primary{ background:var(--accent); color:var(--cream); box-shadow:0 8px 18px rgba(198,156,109,0.14); }
+    .btn-primary:hover{ transform:translateY(-2px); }
+    .btn-secondary{ background:transparent; border:1px solid rgba(62,47,47,0.06); color:var(--text); }
+
+    /* Images: consistent aspect and lazy-friendly */
+    .media-16-9{ aspect-ratio:16/9; width:100%; height:auto; object-fit:cover; display:block; }
+
+    /* Cards */
+    .card-padded{ padding:1.25rem; }
+
+    /* Focus styles for accessibility */
+    :focus{ outline:none; box-shadow: 0 0 0 5px rgba(198,156,109,0.16); border-radius:8px; }
+    a:focus, button:focus, input:focus, textarea:focus{ outline: none; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+
+    /* Mobile nav */
+    .mobile-nav{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; justify-content:flex-end; }
+    .mobile-panel{ width:280px; background:var(--cream); padding:24px; }
+
+    /* Blog grid */
+    .blog-grid{ display:grid; grid-template-columns:repeat(1,1fr); gap:1rem; }
+    @media(min-width:768px){ .blog-grid{ grid-template-columns:repeat(3,1fr); } }
+
+    /* small helpers */
+    .muted{ color:rgba(47,35,35,0.72); }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="w-full py-4">
+    <div class="container flex items-center justify-between">
+      <a href="#" class="text-sm font-semibold" style="color:var(--text)">SRS</a>
+
+      <nav class="hidden md:flex items-center space-x-6 text-sm" aria-label="Primary navigation">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#experience" class="nav-link">Experience</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#publications" class="nav-link">Achievements</a>
+        <a href="#blog" class="nav-link">Blog</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <!-- mobile menu button -->
+      <div class="md:hidden">
+        <button id="menuToggle" aria-label="Open menu" aria-expanded="false" class="text-[var(--text)]">
+          <i data-feather="menu"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile nav (hidden by default) -->
+    <div id="mobileNav" class="mobile-nav hidden" aria-hidden="true">
+      <div class="mobile-panel panel">
+        <div class="flex items-center justify-between mb-6">
+          <strong>SRS</strong>
+          <button id="mobileClose" aria-label="Close menu"><i data-feather="x"></i></button>
+        </div>
+        <nav class="flex flex-col gap-3">
+          <a href="#about" class="py-2">About</a>
+          <a href="#experience" class="py-2">Experience</a>
+          <a href="#projects" class="py-2">Projects</a>
+          <a href="#publications" class="py-2">Achievements</a>
+          <a href="#blog" class="py-2">Blog</a>
+          <a href="#contact" class="py-2">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOP FOLD: name + tagline + portrait + short about -->
+  <main class="hero-fold">
+    <div class="container grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+      <!-- portrait (left on desktop) -->
+      <div class="flex justify-center md:justify-start" data-aos="fade-up">
+        <img src="assets/dp.jpg?v=20250919" alt="Portrait of Siddharth Rama Sushil" class="portrait" loading="lazy" decoding="async" />
+      </div>
+
+      <!-- name + tagline + short about -->
+      <div class="py-6 md:py-0" data-aos="fade-up" data-aos-delay="120">
+        <h1 class="hero-title font-extrabold leading-tight mb-4" style="font-size:var(--fs-h1); color:var(--text)">Siddharth Rama Sushil</h1>
+        <p class="text-lg md:text-xl mb-6" style="color:var(--text)"><strong>Robotics</strong> | <strong>Perception</strong> | <strong>Reinforcement Learning</strong></p>
+
+        <p class="muted mb-6">I design production-ready perception systems and robust sim pipelines that transfer well to hardware — specializing in SLAM, visual–inertial navigation, 6‑DoF pose estimation and sim-to-real reinforcement learning.</p>
+
+        <div class="flex flex-wrap gap-3 mb-6">
+          <span class="px-3 py-2 rounded-full text-sm font-medium" style="background:var(--khaki); color:var(--text)">SLAM</span>
+          <span class="px-3 py-2 rounded-full text-sm font-medium" style="background:var(--khaki); color:var(--text)">Reinforcement Learning</span>
+          <span class="px-3 py-2 rounded-full text-sm font-medium" style="background:var(--khaki); color:var(--text)">Navigation</span>
+        </div>
+
+        <div class="flex gap-3 items-center">
+          <a href="#contact" class="btn btn-primary" role="button">Get In Touch <i data-feather="send" class="ml-2"></i></a>
+          <a href="#projects" class="btn btn-primary">View Projects</a>
+          <a href="/assets/SiddharthRamaSushil_resume.pdf" class="btn btn-primary" download>Download CV</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+<!-- ABOUT + EDUCATION SPLIT CARDS (equal-height) -->
+<section id="about-education" class="py-12">
+  <div class="container">
+    <!-- items-stretch makes grid children equal height -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+      <!-- LEFT: About card -->
+      <article class="panel p-6 h-full flex flex-col" data-aos="fade-right">
+        <!-- main content that grows -->
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold mb-4" style="color:var(--text)">About Me</h2>
+
+          <p class="muted mb-4">
+            Currently pursuing M.S. ECE (Intelligent Systems, Robotics and Control) at the University of California, San Diego. I work on visual–inertial SLAM, 6-DoF pose estimation, semantic segmentation and sim-to-real reinforcement learning used on real robots.
+          </p>
+
+          <p class="muted mb-4">
+            I focus on robust, maintainable systems — combining geometry-first classical methods with learning where it helps. I care about simulation fidelity, domain randomization, and deployment constraints when designing perception and control stacks.
+          </p>
+
+          <div class="mt-4 flex flex-wrap gap-3">
+            <span class="px-3 py-2 rounded-full" style="background:var(--khaki); color:var(--text); font-weight:600;">Computer Vision</span>
+            <span class="px-3 py-2 rounded-full" style="background:var(--khaki); color:var(--text); font-weight:600;">ROS 2</span>
+            <span class="px-3 py-2 rounded-full" style="background:var(--khaki); color:var(--text); font-weight:600;">C++ / PyTorch</span>
+            <span class="px-3 py-2 rounded-full" style="background:var(--khaki); color:var(--text); font-weight:600;">Sim-to-Real</span>
+          </div>
+        </div>
+
+        <!-- footer area (stays pinned to bottom) -->
+        <div class="mt-6 flex items-center gap-3">
+          <a href="#contact" class="btn btn-primary">Get In Touch <i data-feather="send" class="ml-2"></i></a>
+          <a href="/assets/Siddharth_Rama_Sushil_CV.pdf" class="btn btn-secondary" download>Download CV</a>
+        </div>
+      </article>
+
+      <!-- RIGHT: Education card (equal height, scrolls if content overflows) -->
+      <aside class="panel p-6 h-full flex flex-col" data-aos="fade-left" aria-labelledby="education-heading">
+        <h2 id="education-heading" class="text-2xl font-bold mb-4" style="color:var(--text)">Education</h2>
+
+        <!-- make the list area flexible and scrollable if needed -->
+        <div class="flex-1 overflow-auto pr-2">
+          <!-- Education entry (copy this block for additional schools) -->
+          <div class="flex items-start gap-4 mb-6">
+            <div class="flex-shrink-0">
+              <img src="assets/ucsd.jpg?v=20250919" alt="UC San Diego logo" class="w-20 h-20 rounded-full object-cover border-2 border-white ring-2 ring-[var(--khaki)]" loading="lazy" decoding="async" />
+            </div>
+            <div>
+              <p class="font-semibold" style="color:var(--text)">University of California, San Diego, USA</p>
+              <p class="muted text-sm mb-2">M.S. ECE (Intelligent Systems, Robotics and Control) • 2025 – Present</p>
+
+              <div>
+                <p class="font-medium text-sm mb-1">Relevant courses</p>
+                <ul class="text-sm muted list-disc list-inside ml-1">
+                  <li>Digital Image Processing (ECE 269)</li>
+                  <li>Statistical Learning 1 (271A)</li>
+                  <li>Computer Vision 1 (252A)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Another education entry -->
+          <div class="flex items-start gap-4 mb-6">
+            <div class="flex-shrink-0">
+              <img src="assets/iiit.jpg?v=20250919" alt="IIIT Jabalpur logo" class="w-20 h-20 rounded-full object-cover border-2 border-white ring-2 ring-[var(--khaki)]" loading="lazy" decoding="async" />
+            </div>
+            <div>
+              <p class="font-semibold" style="color:var(--text)">IIIT Jabalpur, India</p>
+              <p class="muted text-sm mb-2">BTech ME • 2019 – 2023</p>
+
+              <div>
+                <p class="font-medium text-sm mb-1">Relevant courses</p>
+                <ul class="text-sm muted list-disc list-inside ml-1">
+                  <li>Human-centric Robotics</li>
+                  <li>Industrial IoT,</li>
+                  <li>Smart Sensors</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- add more entries as needed -->
+        </div>
+
+     
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="py-12 bg-[var(--sand)]">
+  <div class="container">
+    <h2 class="text-3xl font-bold mb-8 text-center" style="color:var(--text)">Experience</h2>
+
+    <!-- Addverb -->
+    <div class="panel p-6 md:p-8 mb-8" data-aos="fade-up">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-16 h-16 rounded-full ring-2 ring-[var(--khaki)] overflow-hidden bg-center bg-cover"
+             style="background-image:url('assets/c.jpeg?v=20250919');" role="img" aria-label="Addverb logo"></div>
+        <div>
+          <h3 class="text-2xl font-bold" style="color:var(--text)">Addverb Technologies</h3>
+          <p class="muted">Robotics Engineer • Sept 2023 – Jul 2025</p>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">Lead Architect — Object Recognition & 6DOF Pose Estimation</h4>
+            <p class="muted mb-3">Designed and deployed object recognition and 6-DoF pose estimation modules for production robotic systems.</p>
+            <ul class="list-disc list-inside muted text-sm space-y-1">
+              <li>Made an end-to-end 6-DoF pipeline (detection → pose refinement → verification) ready for deployment.</li>
+              <li>Optimized inference for edge hardware and reduced end-to-end latency for closed-loop control.</li>
+              <li>Built test harnesses, unit tests and validation suites for deterministic QA and regression checks.</li>
+              <li>Integrated pose outputs with robot control stack and safety interlocks for reliable pick/place operations.</li>
+            </ul>
+          </div>
+          <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+            <img src="assets/gifs/velo2.gif?v=20250919"
+                 alt="6DOF pose estimation demo"
+                 class="w-full h-36 md:h-44 object-cover"
+                 loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center md:flex-row-reverse">
+          <div>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">Visual–Inertial SLAM</h4>
+            <p class="muted mb-3">Built a visual–inertial SLAM pipeline fusing IMU + vision to improve localization robustness.</p>
+            <ul class="list-disc list-inside muted text-sm space-y-1">
+              <li>Fused IMU data with visual features to maintain tracking through low-texture and dynamic scenes.</li>
+              <li>Implemented bias estimation & online calibration to reduce drift over long runs.</li>
+              <li>Designed failure-recovery strategies (relocalization / loop detection) to minimise downtime in production.</li>
+            </ul>
+          </div>
+          <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+            <img src="assets/gifs/slam-velo.gif?v=20250919"
+                 alt="Visual-inertial SLAM demo"
+                 class="w-full h-36 md:h-44 object-cover"
+                 loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">Semantic Segmentation for SKU Classification</h4>
+            <p class="muted mb-3">Applied semantic segmentation to classify SKUs and improve robotic perception in cluttered scenes.</p>
+            <ul class="list-disc list-inside muted text-sm space-y-1">
+              <li>Collected and annotated domain-specific datasets and implemented robust augmentation strategies.</li>
+              <li>Trained and deployed compact segmentation models, with quantization for edge inference.</li>
+              <li>Built pipelines to convert segmentation outputs into object masks for downstream pose estimation.</li>
+            </ul>
+          </div>
+          <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+            <img src="assets/gifs/velo3.gif?v=20250919"
+                 alt="Semantic segmentation demo"
+                 class="w-full h-36 md:h-44 object-cover"
+                 loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center md:flex-row-reverse">
+          <div>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">Enhanced Simulation Fidelity</h4>
+            <p class="muted mb-3">Improved sim-to-real transfer by increasing simulator fidelity and variability.</p>
+            <ul class="list-disc list-inside muted text-sm space-y-1">
+              <li>Added realistic sensor/actuator noise models, IMU bias simulation and jitter to the sim stack.</li>
+              <li>Implemented structured domain randomization (lighting, textures, physics) to cover real-world variance.</li>
+              <li>Simulated network latency and packet loss to validate robustness of distributed components.</li>
+            </ul>
+          </div>
+          <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+            <img src="assets/gifs/simu_velo.gif?v=20250919"
+                 alt="Simulation demo"
+                 class="w-full h-36 md:h-44 object-cover"
+                 loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">On-site Deployment & Integration</h4>
+            <p class="muted mb-3">Led on-site deployments ensuring smooth integration into customer environments.</p>
+            <ul class="list-disc list-inside muted text-sm space-y-1">
+              <li>Coordinated integrations with partners (Siemens, ISITEC, Adidas) and validated system performance in-situ.</li>
+              <li>Performed live debugging, root-cause analysis and produced runbooks for field teams.</li>
+              <li>Delivered deployment documentation and operator training for production handover.</li>
+            </ul>
+          </div>
+          <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+            <img src="assets/gifs/goa_velo.gif?v=20250919"
+                 alt="On-site deployment demo"
+                 class="w-full h-36 md:h-44 object-cover"
+                 loading="lazy" decoding="async">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DRDO -->
+    <div class="panel p-6 md:p-8" data-aos="fade-up" data-aos-delay="80">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-16 h-16 rounded-full ring-2 ring-[var(--khaki)] overflow-hidden bg-center bg-cover"
+             style="background-image:url('assets/drdo.jpeg?v=20250919');" role="img" aria-label="DRDO logo"></div>
+        <div>
+          <h3 class="text-2xl font-bold" style="color:var(--text)">Defence Research and Development Organisation (DRDO)</h3>
+          <p class="muted">Research Intern — Counter-measure Division • Jan 2023 – Sept 2023</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div>
+          <p class="muted mb-3">Conducted research on CNNs for infrared small target detection, developed preprocessing pipelines for low SNR IR images, and applied deep-learning feature aggregation to make models robust to practical field noise patterns.</p>
+          <ul class="list-disc list-inside muted text-sm space-y-1">
+            <li>Designed preprocessing (denoising / contrast enhancement) to improve target SNR in IR frames.</li>
+            <li>Built pixel-level annotated datasets and evaluation protocols for small-target detection under noise.</li>
+            <li>Explored feature-aggregation techniques to boost performance in low-SNR conditions and wrote technical reports summarizing results.</li>
+            <li>Prototyped models and validated on edge-capable hardware for real-time inference feasibility.</li>
+          </ul>
+        </div>
+        <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+          <img src="assets/gifs/drdo_point.gif?v=20250919"
+               alt="DRDO IRSTD"
+               class="w-full h-36 md:h-44 object-cover"
+               loading="lazy" decoding="async">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="py-12">
+    <div class="container">
+      <h2 class="text-3xl font-bold mb-6 text-center" style="color:var(--text)">Featured Projects</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Project Card (example repeated for others) -->
+        <article class="project-card panel">
+          <img src="assets/gifs/velo1.gif?v=20250919" alt="SLAM System" class="media-16-9">
+          <div class="card-padded">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">Robust Plane Segmentation for 3D Pose Estimation</h3>
+            <p class="muted mb-4">Geometry-first plane segmentation module that runs in real-time to support high precision pose estimation pipelines.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">C++</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">Bundle Adjustment</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">Sensor Fusion</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card panel" data-aos="fade-up" data-aos-delay="80">
+          <img src="assets/gifs/crane.gif?v=20250919" alt="Crane Hook Pose Tracker" class="media-16-9">
+          <div class="card-padded">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">6-DoF Pose Tracker for Crane Hooks</h3>
+            <p class="muted mb-4">Plug-and-play smart box for tracking crane hook position & orientation (hackathon project with L&amp;T).</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">Unity</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">C++</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card panel" data-aos="fade-up" data-aos-delay="140">
+          <img src="assets/photos/sewer.png?v=20250919" alt="Sewer Monitoring Robot" class="media-16-9">
+          <div class="card-padded">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">Sewer Monitoring Robot</h3>
+            <p class="muted mb-4">Underground pipeline mapping & structural analysis robot for efficient inspection and maintenance planning.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">Unity</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">C#</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- additional projects (copy pattern) -->
+        <article class="project-card panel">
+          <img src="assets/photos/UV_bot.png?v=20250919" alt="UV Disinfectant Robot" class="media-16-9">
+          <div class="card-padded">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">UV Disinfectant Robot</h3>
+            <p class="muted mb-4">Autonomous UV-disinfection robot with optimized zap patterns to maximize area coverage while saving power.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">C++</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">Haptic Rendering</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card panel" data-aos="fade-up" data-aos-delay="80">
+          <img src="assets/gifs/ransac.gif?v=20250919" alt="Ground Plane Segmentation" class="media-16-9">
+          <div class="card-padded">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">Efficient RANSAC Ground Plane Segmentation</h3>
+            <p class="muted mb-4">IMU-aided RANSAC algorithm that reduces computation and improves real-time performance for ground plane detection.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">C++</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">OpenCV</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card panel" data-aos="fade-up" data-aos-delay="120">
+          <img src="assets/photos/a_star.png?v=20250919" alt="Custom A* Path Planner" class="media-16-9">
+          <div class="card-padded">
+            <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">Custom Path Planning Algorithm</h3>
+            <p class="muted mb-4">Lightweight ROS-independent A* planner with smoothing designed for resource-constrained boards.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">C++</span>
+              <span class="text-xs px-2 py-1 rounded-full" style="background:var(--khaki); color:var(--text)">Path Smoothing</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS -->
+<section id="publications" class="py-12 bg-[var(--sand)]">
+  <div class="container">
+    <h2 class="text-3xl font-bold mb-8 text-center" style="color:var(--text)">Achievements</h2>
+
+    <ul class="space-y-6 mb-8">
+      <li class="panel p-6">
+        <div class="flex items-start gap-4">
+          <i data-feather="file-text" class="text-[var(--accent)] mt-1" aria-hidden="true"></i>
+          <div>
+            <h3 class="text-lg font-semibold" style="color:var(--text)">A Sensor-based system for real-time three-dimensional positioning of crane hook and method thereof</h3>
+            <p class="muted mt-1">Siddharth Rama Sushil, Co-author • published by <em>Intellectual Property India</em>, 2023</p>
+            <div class="mt-3">
+              <a href="#" class="text-[var(--accent)] hover:underline" rel="noopener">Application No. 202321075984</a>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Entire card is clickable for better UX -->
+      <a
+        href="https://www.youtube.com/watch?v=HKQE6MwhfGc"
+        target="_blank"
+        rel="noopener"
+        class="panel block overflow-hidden focus:outline-none"
+        data-aos="fade-up"
+        data-aos-delay="80"
+        aria-label="Gold Medal B.Tech — opens in a new tab"
+      >
+        <img src="assets/gold.jpeg" alt="Gold medal ceremony" class="w-full aspect-[7/10] object-cover" loading="lazy" decoding="async">
+        <div class="p-4">
+          <h3 class="font-bold" style="color:var(--accent)">Gold Medal B.Tech — 2024</h3>
+          <p class="muted">Awarded the D&amp;M Proficiency Gold Medal for best project across the entire B.Tech batch of 2023.</p>
+        </div>
+      </a>
+
+      <a
+        href="https://www.youtube.com/watch?v=-dYebImLJpM"
+        target="_blank"
+        rel="noopener"
+        class="panel block overflow-hidden focus:outline-none"
+        data-aos="fade-up"
+        data-aos-delay="120"
+        aria-label="Top 10 TIGC — opens in a new tab"
+      >
+        <img src="assets/latrobe.jpeg" alt="TIGC prototype demo" class="w-full aspect-[7/10] object-cover" loading="lazy" decoding="async">
+        <div class="p-4">
+          <h3 class="font-bold" style="color:var(--accent)">Top 10 TIGC — 2024</h3>
+          <p class="muted">Ranked in the top 10 at TIGC hackathon (La Trobe University), awarded AUD 1,000 in prototype funding.</p>
+        </div>
+      </a>
+
+      <a
+        href="https://www.ltts.com/press-release/TECHgium-5th-edition"
+        target="_blank"
+        rel="noopener"
+        class="panel block overflow-hidden focus:outline-none"
+        data-aos="fade-up"
+        data-aos-delay="160"
+        aria-label="AIR-1 Techgium — opens in a new tab"
+      >
+        <img src="assets/techgium.jpeg" alt="Techgium contest moment" class="w-full aspect-[7/10] object-cover" loading="lazy" decoding="async">
+        <div class="p-4">
+          <h3 class="font-bold" style="color:var(--accent)">AIR-1 Techgium — 2022</h3>
+          <p class="muted">Secured AIR-1 among 800+ participants in an L&amp;T hackathon, winning prize for crane-safety solution.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+  <!-- BLOG (Medium placeholders) -->
+  <section id="blog" class="py-12">
+    <div class="container">
+      <h2 class="text-3xl font-bold mb-6 text-center" style="color:var(--text)">Blog — Selected Articles</h2>
+      <p class="muted text-center mb-8">Short previews of your Medium articles about robotics. Replace the placeholders with your real Medium titles, images and links.</p>
+
+      <div class="blog-grid">
+        <!-- Repeat these 6 placeholders and update href/src/text as needed -->
+        <article class="panel overflow-hidden">
+          <img src="assets/blog/slam1.gif" alt="Article image 1" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold">Hands on SLAM Frontend: Landmark Lifecycle</h3>
+            <p class="muted text-sm mt-1">In Part 1, I walked through my early experiments with feature detection, matching, and triangulation. I asked a question: if triangulation works so well, why not just keep doing it forever between consecutive frames? ... </p>
+            <a href="#" class="mt-3 inline-block text-[var(--accent)] hover:underline">Read on Medium →</a>
+          </div>
+        </article>
+
+        <article class="panel overflow-hidden">
+          <img src="assets/blog/slam2.png" alt="Article image 2" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold">Hands-On SLAM: My Experience Building a Visual Frontend Pipeline</h3>
+            <p class="muted text-sm mt-1">You’re staring at a research paper about SLAM, and there’s this intimidating diagram with boxes labelled “Bundle Adjustment,” “Loop Closure,” “Pose Graph Optimisation.” Your brain immediately goes into overwhelm mode. Where do you even start? ...</p>
+            <a href="#" class="mt-3 inline-block text-[var(--accent)] hover:underline">Read on Medium →</a>
+          </div>
+        </article>
+
+        <article class="panel overflow-hidden">
+          <img src="assets/blog/svd.gif" alt="Article image 3" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold">Demystifying SVD: The Math Powering Visual SLAM</h3>
+            <p class="muted text-sm mt-1">Singular Value Decomposition sounds intimidating, but it’s actually one of the most powerful and practical tools that helps robots understand what they’re seeing. Think of it as a mathematical Swiss Army knife that solves many of the core problems in robot vision...</p>
+            <a href="#" class="mt-3 inline-block text-[var(--accent)] hover:underline">Read on Medium →</a>
+          </div>
+        </article>
+
+        <article class="panel overflow-hidden">
+          <img src="assets/blog/epipolar.gif" alt="Article image 4" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold">Epipolar Geometry in Practice: Build, Visualize, Understand</h3>
+            <p class="muted text-sm mt-1">I built a tiny C++/OpenCV repo you can run locally to feel epipolar geometry instead of just reading about it...</p>
+            <a href="#" class="mt-3 inline-block text-[var(--accent)] hover:underline">Read on Medium →</a>
+          </div>
+        </article>
+
+        <article class="panel overflow-hidden">
+          <img src="assets/blog/mathrobot.png" alt="Article image 5" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold">Foundations of Robot Perception: A Beginner’s Guide to the Math</h3>
+            <p class="muted text-sm mt-1">When you’re building a robot that needs to see the world, you’re basically asking it to solve puzzles like: “Where is that object in 3D space based on what I see in this 2D camera image?” ...“How did the robot move between these two camera shots?”</p>
+            <a href="#" class="mt-3 inline-block text-[var(--accent)] hover:underline">Read on Medium →</a>
+          </div>
+        </article>
+
+        <article class="panel overflow-hidden">
+          <img src="assets/blog/planeseg.gif" alt="Article image 6" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold">Building a Robust Plane Segmentation Pipeline for 3D Pose Estimation in Robotics</h3>
+            <p class="muted text-sm mt-1">When working on industrial automation systems, flashy CV models and deep learning pipelines often get the spotlight. But sometimes, it’s the quieter, lower-level problems — like reliably extracting a plane from a noisy point cloud — that make or break a robotic system...</p>
+            <a href="#" class="mt-3 inline-block text-[var(--accent)] hover:underline">Read on Medium →</a>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-12">
+    <div class="container max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8 text-center" style="color:var(--text)">Get In Touch</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div data-aos="fade-right">
+          <h3 class="text-xl font-semibold mb-4" style="color:var(--accent)">Contact Information</h3>
+          <p class="muted mb-6">Feel free to reach out if you have a question, or just want to connect.</p>
+
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <i data-feather="mail" class="text-[var(--accent)]"></i>
+              <span class="muted">sramasushil@ucsd.edu</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <i data-feather="phone" class="text-[var(--accent)]"></i>
+              <span class="muted">+1 (858) 214-6356</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <i data-feather="map-pin" class="text-[var(--accent)]"></i>
+              <span class="muted">San Diego, CA</span>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-4">
+            <a href="https://github.com/daatsi-aeres/" class="text-[var(--text)] hover:text-[var(--accent)]" rel="noopener" target="_blank"><i data-feather="github"></i></a>
+            <a href="https://www.linkedin.com/in/siddharth-rs/" class="text-[var(--text)] hover:text-[var(--accent)]" rel="noopener" target="_blank"><i data-feather="linkedin"></i></a>
+          </div>
+        </div>
+
+        <div data-aos="fade-left">
+          <!-- enhanced contact form with client validation and inline success msg -->
+          <!-- Recommended: replace action with Formspree/Netlify endpoint for production. -->
+          <form id="contactForm" method="POST" class="space-y-4 panel p-4">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1" style="color:var(--text)">Name</label>
+              <input id="name" name="name" type="text" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required />
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium mb-1" style="color:var(--text)">Email</label>
+              <input id="email" name="email" type="email" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required />
+            </div>
+
+            <div>
+              <label for="message" class="block text-sm font-medium mb-1" style="color:var(--text)">Message</label>
+              <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required></textarea>
+            </div>
+
+            <div id="formStatus" class="text-sm" aria-live="polite"></div>
+
+            <div class="flex gap-3">
+              <button type="submit" class="btn btn-primary">Send Message <i data-feather="send" class="ml-2"></i></button>
+              <a href="mailto:sramasushil@ucsd.edu" class="btn btn-secondary">Or Email Directly</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 bg-[var(--cream)]">
+    <div class="container text-center text-sm muted">© 2025 Siddharth Rama Sushil. All rights reserved.</div>
+  </footer>
+
+  <!-- Init AOS and Feather -->
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      AOS.init({ duration: 700, once: true });
+      feather.replace();
+
+      // Mobile nav toggle
+      const menuToggle = document.getElementById('menuToggle');
+      const mobileNav = document.getElementById('mobileNav');
+      const mobileClose = document.getElementById('mobileClose');
+      function openMobile(){ mobileNav.classList.remove('hidden'); mobileNav.setAttribute('aria-hidden','false'); menuToggle.setAttribute('aria-expanded','true'); }
+      function closeMobile(){ mobileNav.classList.add('hidden'); mobileNav.setAttribute('aria-hidden','true'); menuToggle.setAttribute('aria-expanded','false'); }
+      menuToggle?.addEventListener('click', ()=>{ const expanded = menuToggle.getAttribute('aria-expanded') === 'true'; if(expanded) closeMobile(); else openMobile(); });
+      mobileClose?.addEventListener('click', closeMobile);
+
+      // Contact form validation and fake submit (replace with real endpoint)
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      form?.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        status.textContent = '';
+        const email = form.email.value.trim();
+        const name = form.name.value.trim();
+        const msg = form.message.value.trim();
+        const validEmail = /.+@.+\..+/.test(email);
+        if(!name || !validEmail || !msg){
+          status.textContent = 'Please provide a valid name, email and message.';
+          return;
+        }
+        // Simulate success — replace with fetch() to your form backend
+        status.textContent = 'Sending...';
+        setTimeout(()=>{ status.textContent = 'Thanks — your message has been received. I will respond within a few days.'; form.reset(); }, 900);
+      });
+
+      // Small accessibility: trap focus in mobile nav when open (simple)
+      document.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Escape') closeMobile();
+      });
+
+    });
+  </script>
+</body>
+</html>
