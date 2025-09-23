@@ -33,9 +33,10 @@ jobs:
         run: |
           # ensure workspace directories exist
           mkdir -p _site
+          # run docker build; note: each backslash must be the final character on the line
           docker run --rm \
-            -v ${{ github.workspace }}:/srv/jekyll \
-            -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
+            -v "${GITHUB_WORKSPACE}:/srv/jekyll" \
+            -v "${GITHUB_WORKSPACE}/_site:/srv/jekyll/_site" \
             jekyll/builder:latest /bin/bash -c "chmod -R 777 /srv/jekyll && jekyll build --future"
 
       - name: Upload Pages artifact
