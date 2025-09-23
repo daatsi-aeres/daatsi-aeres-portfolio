@@ -126,7 +126,7 @@
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
 
-    /* Mobile nav */
+    /* Mobile nav (original simplified) */
     .mobile-nav{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; justify-content:flex-end; }
     .mobile-panel{ width:280px; background:var(--cream); padding:24px; }
 
@@ -136,6 +136,50 @@
 
     /* small helpers */
     .muted{ color:rgba(47,35,35,0.72); }
+
+    /* ---------------------------
+       Mobile improvements & fixes
+       --------------------------- */
+
+    /* ensure header sits above mobile panel */
+    header { position: relative; z-index: 70; }
+
+    /* improved mobile panel: slide-in, overlay, z-index */
+    .mobile-nav { position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; justify-content:flex-end; z-index:60; }
+    .mobile-panel{ width:320px; max-width:86vw; background:var(--cream); padding:24px; transform: translateX(100%); transition: transform 260ms var(--motion-med); box-shadow: 0 20px 40px rgba(62,47,47,0.12); border-left:1px solid rgba(62,47,47,0.04); border-radius:0; }
+    .mobile-nav.open .mobile-panel { transform: translateX(0); }
+    .mobile-nav.hidden { display:none; } /* keep existing hidden behavior for initial state */
+
+    /* overlay hit area (clicking overlay closes nav) */
+    .mobile-nav .overlay-hit { flex:1; }
+
+    /* larger hit area for icon buttons */
+    #menuToggle, #mobileClose { padding:10px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; }
+    #menuToggle:focus, #mobileClose:focus { outline: none; box-shadow: 0 0 0 6px rgba(198,156,109,0.14); }
+
+    /* make mobile nav links easy to tap */
+    .mobile-panel nav a { min-height:44px; display:flex; align-items:center; padding:10px 6px; }
+
+    /* logo circle helper (keeps same visual size as original w-16 h-16) */
+    .logo-circle {
+      width:64px; height:64px;
+      min-width:64px; min-height:64px;
+      border-radius:50%;
+      overflow:hidden;
+      display:inline-block;
+      vertical-align:middle;
+      background-size: cover;
+      background-position: center;
+      object-fit: cover;
+      border: 2px solid white;
+      box-shadow: 0 6px 18px rgba(62,47,47,0.06);
+    }
+    @media (max-width:420px){
+      .logo-circle { width:56px; height:56px; min-width:56px; min-height:56px; }
+    }
+
+    /* Keep hero fold usable on small screens but do not alter portrait sizes */
+    @media (max-width:600px){ .hero-fold { min-height: auto; padding: 36px 0; } }
 
   </style>
 </head>
@@ -165,7 +209,8 @@
 
     <!-- Mobile nav (hidden by default) -->
     <div id="mobileNav" class="mobile-nav hidden" aria-hidden="true">
-      <div class="mobile-panel panel">
+      <div class="overlay-hit" role="button" aria-label="Close menu overlay"></div>
+      <div class="mobile-panel panel" role="dialog" aria-modal="true" aria-label="Main mobile menu">
         <div class="flex items-center justify-between mb-6">
           <strong>SRS</strong>
           <button id="mobileClose" aria-label="Close menu"><i data-feather="x"></i></button>
@@ -196,7 +241,7 @@
         <h1 class="hero-title font-extrabold leading-tight mb-4" style="font-size:var(--fs-h1); color:var(--text)">Siddharth Rama Sushil</h1>
         <p class="text-lg md:text-xl mb-6" style="color:var(--text)"><strong>Robotics</strong> | <strong>Perception</strong> | <strong>Reinforcement Learning</strong></p>
 
-        <p class="muted mb-6">I design production-ready perception systems and robust sim pipelines that transfer well to hardware — specializing in SLAM, visual–inertial navigation, 6‑DoF pose estimation and sim-to-real reinforcement learning.</p>
+        <p class="muted mb-6">I design production-ready perception systems and robust sim pipelines that transfer well to hardware — specializing in SLAM, visual–inertial navigation, 6-DoF pose estimation and sim-to-real reinforcement learning.</p>
 
         <div class="flex flex-wrap gap-3 mb-6">
           <span class="px-3 py-2 rounded-full text-sm font-medium" style="background:var(--khaki); color:var(--text)">SLAM</span>
@@ -244,7 +289,7 @@
         <!-- footer area (stays pinned to bottom) -->
         <div class="mt-6 flex items-center gap-3">
           <a href="#contact" class="btn btn-primary">Get In Touch <i data-feather="send" class="ml-2"></i></a>
-          <a href="/assets/Siddharth_Rama_Sushil_CV.pdf" class="btn btn-secondary" download>Download CV</a>
+          <a href="assets/Siddharth_Rama_Sushil_CV.pdf" class="btn btn-secondary" download>Download CV</a>
         </div>
       </article>
 
@@ -311,8 +356,8 @@
     <!-- Addverb -->
     <div class="panel p-6 md:p-8 mb-8" data-aos="fade-up">
       <div class="flex items-center gap-4 mb-4">
-        <div class="w-16 h-16 rounded-full ring-2 ring-[var(--khaki)] overflow-hidden bg-center bg-cover"
-             style="background-image:url('assets/c.jpeg?v=20250919');" role="img" aria-label="Addverb logo"></div>
+        <!-- replaced background-div with an img using logo-circle helper -->
+        <img src="assets/c.jpeg?v=20250919" alt="Addverb logo" class="logo-circle" loading="lazy" decoding="async" />
         <div>
           <h3 class="text-2xl font-bold" style="color:var(--text)">Addverb Technologies</h3>
           <p class="muted">Robotics Engineer • Sept 2023 – Jul 2025</p>
@@ -417,8 +462,8 @@
     <!-- DRDO -->
     <div class="panel p-6 md:p-8" data-aos="fade-up" data-aos-delay="80">
       <div class="flex items-center gap-4 mb-4">
-        <div class="w-16 h-16 rounded-full ring-2 ring-[var(--khaki)] overflow-hidden bg-center bg-cover"
-             style="background-image:url('assets/drdo.jpeg?v=20250919');" role="img" aria-label="DRDO logo"></div>
+        <!-- replaced background-div with an img using logo-circle helper -->
+        <img src="assets/drdo.jpeg?v=20250919" alt="DRDO logo" class="logo-circle" loading="lazy" decoding="async" />
         <div>
           <h3 class="text-2xl font-bold" style="color:var(--text)">Defence Research and Development Organisation (DRDO)</h3>
           <p class="muted">Research Intern — Counter-measure Division • Jan 2023 – Sept 2023</p>
@@ -724,7 +769,7 @@
               <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required></textarea>
             </div>
 
-            <div id="formStatus" class="text-sm" aria-live="polite"></div>
+            <div id="formStatus" class="text-sm" aria-live="polite" role="status"></div>
 
             <div class="flex gap-3">
               <button type="submit" class="btn btn-primary">Send Message <i data-feather="send" class="ml-2"></i></button>
@@ -744,17 +789,37 @@
   <!-- Init AOS and Feather -->
   <script>
     document.addEventListener('DOMContentLoaded', ()=>{
-      AOS.init({ duration: 700, once: true });
+      // disable AOS on small screens to avoid jank
+      AOS.init({ duration: 700, once: true, disable: window.innerWidth < 600 });
       feather.replace();
 
-      // Mobile nav toggle
+      // Mobile nav toggle (improved)
       const menuToggle = document.getElementById('menuToggle');
       const mobileNav = document.getElementById('mobileNav');
       const mobileClose = document.getElementById('mobileClose');
-      function openMobile(){ mobileNav.classList.remove('hidden'); mobileNav.setAttribute('aria-hidden','false'); menuToggle.setAttribute('aria-expanded','true'); }
-      function closeMobile(){ mobileNav.classList.add('hidden'); mobileNav.setAttribute('aria-hidden','true'); menuToggle.setAttribute('aria-expanded','false'); }
+      const overlayHit = mobileNav?.querySelector('.overlay-hit');
+
+      function openMobile(){ 
+        mobileNav?.classList.remove('hidden'); 
+        requestAnimationFrame(()=> mobileNav?.classList.add('open'));
+        mobileNav?.setAttribute('aria-hidden','false'); 
+        menuToggle?.setAttribute('aria-expanded','true'); 
+        document.body.style.overflow = 'hidden';
+        const firstLink = mobileNav.querySelector('nav a');
+        firstLink?.focus();
+      }
+      function closeMobile(){ 
+        mobileNav?.classList.remove('open'); 
+        mobileNav?.setAttribute('aria-hidden','true'); 
+        menuToggle?.setAttribute('aria-expanded','false'); 
+        document.body.style.overflow = '';
+        const onEnd = () => { mobileNav?.classList.add('hidden'); mobileNav?.removeEventListener('transitionend', onEnd); };
+        mobileNav?.addEventListener('transitionend', onEnd);
+        menuToggle?.focus();
+      }
       menuToggle?.addEventListener('click', ()=>{ const expanded = menuToggle.getAttribute('aria-expanded') === 'true'; if(expanded) closeMobile(); else openMobile(); });
       mobileClose?.addEventListener('click', closeMobile);
+      overlayHit?.addEventListener('click', closeMobile);
 
       // Contact form validation and fake submit (replace with real endpoint)
       const form = document.getElementById('contactForm');
