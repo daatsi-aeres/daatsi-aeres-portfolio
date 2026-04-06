@@ -353,6 +353,40 @@
   <div class="container">
     <h2 class="text-3xl font-bold mb-8 text-center" style="color:var(--text)">Experience</h2>
 
+    <!-- ARClab — UC San Diego -->
+    <div class="panel p-6 md:p-8 mb-8" data-aos="fade-up">
+      <div class="flex items-center gap-4 mb-4">
+        <img src="assets/ucsd.jpg?v=20250919" alt="UC San Diego logo" class="logo-circle" loading="lazy" decoding="async" />
+        <div>
+          <h3 class="text-2xl font-bold" style="color:var(--text)">Advanced Robotics and Controls Lab (ARClab), UC San Diego</h3>
+          <p class="muted">Graduate Student Researcher • Advisor: Prof. Michael Yip • Sep 2025 – Present</p>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">Sim-to-Real Transfer for Manipulation of Articulated Tools</h4>
+            <p class="muted mb-3">Building a reinforcement learning pipeline in NVIDIA Isaac Sim for a multi-fingered humanoid hand to manipulate objects with robust sim-to-real transfer.</p>
+            <ul class="list-disc list-inside muted text-sm space-y-1">
+              <li>Architected the full NVIDIA Isaac Sim environment — MDP, action/observation spaces, and reward shaping.</li>
+              <li>Designed structured reward landscapes to train stable RL policies for multi-fingered manipulation.</li>
+              <li>Engineering a hybrid controller fusing tactile & force feedback via cross-attention.</li>
+              <li>Implementing a two-stage teacher-student framework targeting zero-shot sim-to-real transfer.</li>
+              <li>Developed density-based curriculum learning to progressively increase task complexity during training.</li>
+              <li>Integrated a comprehensive safety curriculum to produce collision-aware grasping behaviors.</li>
+            </ul>
+          </div>
+          <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
+            <img src="assets/gifs/full_grasp_pick.gif?v=20250919"
+                 alt="Isaac Sim grasp and pick demo"
+                 class="w-full h-36 md:h-44 object-cover object-top"
+                 loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Addverb -->
     <div class="panel p-6 md:p-8 mb-8" data-aos="fade-up">
       <div class="flex items-center gap-4 mb-4">
@@ -386,12 +420,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center md:flex-row-reverse">
           <div>
-            <h4 class="text-lg font-semibold" style="color:var(--accent)">Visual–Inertial SLAM</h4>
-            <p class="muted mb-3">Built a visual–inertial SLAM pipeline fusing IMU + vision to improve localization robustness.</p>
+            <h4 class="text-lg font-semibold" style="color:var(--accent)">Visual–Inertial SLAM — Debugging & Image Processing</h4>
+            <p class="muted mb-3">Operated and maintained a production ORB-SLAM system and built tooling to accelerate on-site diagnostics.</p>
             <ul class="list-disc list-inside muted text-sm space-y-1">
-              <li>Fused IMU data with visual features to maintain tracking through low-texture and dynamic scenes.</li>
-              <li>Implemented bias estimation & online calibration to reduce drift over long runs.</li>
-              <li>Designed failure-recovery strategies (relocalization / loop detection) to minimise downtime in production.</li>
+              <li>Built a debugging portal with feature-rich plots from logged data to rapidly diagnose field failures.</li>
+              <li>Enabled fast root-cause isolation — IMU calibration, keypoint detection, and hardware faults.</li>
+              <li>Added custom DIP filters to the SLAM frontend for warehouse low-light and HDR conditions.</li>
+              <li>Cut on-site debugging turnaround, letting field teams resolve issues without escalation.</li>
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
