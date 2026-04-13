@@ -41,7 +41,8 @@
 
     @media(min-width:1000px){ :root{ --fs-h1:3.6rem; --fs-h2:2rem; --fs-body:1.02rem; } }
 
-    html,body{height:100%}
+    html{ height:100%; overflow-x:hidden; }
+    body{ height:100%; }
     body{
       margin:0;
       font-family: 'Space Grotesk', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -49,7 +50,7 @@
       color:var(--text);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      overflow-x:hidden;
+      /* overflow-x on body breaks position:sticky — use html instead */
       font-size:var(--fs-body);
       line-height:var(--leading-body);
     }
@@ -123,8 +124,32 @@
     :focus{ outline:none; box-shadow: 0 0 0 5px rgba(198,156,109,0.16); border-radius:8px; }
     a:focus, button:focus, input:focus, textarea:focus{ outline: none; }
 
+    /* Smooth scrolling */
+    html { scroll-behavior: smooth; }
+
+    /* Sticky nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 70;
+      background: rgba(246,241,230,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(62,47,47,0.04);
+    }
+
+    /* Active nav link */
+    .nav-link.active:after { width: 100%; }
+    .nav-link.active { color: var(--accent); }
+
+    /* Button hover improvements */
+    .btn-secondary:hover { background: rgba(62,47,47,0.04); transform: translateY(-2px); }
+    .btn-secondary { transition: background var(--motion-fast), transform var(--motion-fast); }
+    .btn-primary { transition: transform var(--motion-fast), box-shadow var(--motion-fast); }
+    .btn-primary:hover { box-shadow: 0 12px 24px rgba(198,156,109,0.22); }
+
     /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+    @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } html { scroll-behavior: auto; } }
 
     /* Mobile nav (original simplified) */
     .mobile-nav{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; justify-content:flex-end; }
@@ -141,8 +166,7 @@
        Mobile improvements & fixes
        --------------------------- */
 
-    /* ensure header sits above mobile panel */
-    header { position: relative; z-index: 70; }
+    /* ensure header sits above mobile panel (sticky nav handles z-index) */
 
     /* improved mobile panel: slide-in, overlay, z-index */
     .mobile-nav { position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; justify-content:flex-end; z-index:60; }
@@ -207,25 +231,26 @@
       </div>
     </div>
 
-    <!-- Mobile nav (hidden by default) -->
-    <div id="mobileNav" class="mobile-nav hidden" aria-hidden="true">
-      <div class="overlay-hit" role="button" aria-label="Close menu overlay"></div>
-      <div class="mobile-panel panel" role="dialog" aria-modal="true" aria-label="Main mobile menu">
-        <div class="flex items-center justify-between mb-6">
-          <strong>SRS</strong>
-          <button id="mobileClose" aria-label="Close menu"><i data-feather="x"></i></button>
-        </div>
-        <nav class="flex flex-col gap-3">
-          <a href="#about" class="py-2">About</a>
-          <a href="#experience" class="py-2">Experience</a>
-          <a href="#projects" class="py-2">Projects</a>
-          <a href="#publications" class="py-2">Achievements</a>
-          <a href="#blog" class="py-2">Blog</a>
-          <a href="#contact" class="py-2">Contact</a>
-        </nav>
-      </div>
-    </div>
   </header>
+
+  <!-- Mobile nav (outside header so it doesn't break sticky) -->
+  <div id="mobileNav" class="mobile-nav hidden" aria-hidden="true">
+    <div class="overlay-hit" role="button" aria-label="Close menu overlay"></div>
+    <div class="mobile-panel panel" role="dialog" aria-modal="true" aria-label="Main mobile menu">
+      <div class="flex items-center justify-between mb-6">
+        <strong>SRS</strong>
+        <button id="mobileClose" aria-label="Close menu"><i data-feather="x"></i></button>
+      </div>
+      <nav class="flex flex-col gap-3">
+        <a href="#about" class="py-2">About</a>
+        <a href="#experience" class="py-2">Experience</a>
+        <a href="#projects" class="py-2">Projects</a>
+        <a href="#publications" class="py-2">Achievements</a>
+        <a href="#blog" class="py-2">Blog</a>
+        <a href="#contact" class="py-2">Contact</a>
+      </nav>
+    </div>
+  </div>
 
   <!-- TOP FOLD: name + tagline + portrait + short about -->
   <main class="hero-fold">
@@ -233,7 +258,7 @@
 
       <!-- portrait (left on desktop) -->
       <div class="flex justify-center md:justify-start" data-aos="fade-up">
-        <img src="assets/dp.jpg?v=20250919" alt="Portrait of Siddharth Rama Sushil" class="portrait" loading="lazy" decoding="async" />
+        <img src="assets/dp.jpg?v=20250919" alt="Portrait of Siddharth Rama Sushil" class="portrait" loading="eager" decoding="async" />
       </div>
 
       <!-- name + tagline + short about -->
@@ -252,7 +277,7 @@
         <div class="flex gap-3 items-center">
           <a href="#contact" class="btn btn-primary" role="button">Get In Touch <i data-feather="send" class="ml-2"></i></a>
           <a href="#projects" class="btn btn-primary">View Projects</a>
-          <a href="assets/SiddharthRamaSushil_resume.pdf" class="btn btn-primary" download>Download CV</a>
+          <a href="assets/SiddharthRamaSushil_resume.pdf" class="btn btn-primary" target="_blank">View CV</a>
         </div>
       </div>
 
@@ -289,7 +314,7 @@
         <!-- footer area (stays pinned to bottom) -->
         <div class="mt-6 flex items-center gap-3">
           <a href="#contact" class="btn btn-primary">Get In Touch <i data-feather="send" class="ml-2"></i></a>
-          <a href="assets/SiddharthRamaSushil_resume.pdf" class="btn btn-secondary" download>Download CV</a>
+          <a href="assets/SiddharthRamaSushil_resume.pdf" class="btn btn-secondary" target="_blank">View CV</a>
         </div>
       </article>
 
@@ -380,10 +405,8 @@
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-            <img src="assets/gifs/full_grasp_pick.gif?v=20250919"
-                 alt="Isaac Sim grasp and pick demo"
-                 class="w-full h-36 md:h-44 object-cover object-top"
-                 loading="lazy" decoding="async">
+            <video src="assets/gifs/full_grasp_pick.mp4" autoplay muted loop playsinline
+                 class="w-full h-36 md:h-44 object-cover object-top"></video>
           </div>
         </div>
       </div>
@@ -413,10 +436,8 @@
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-            <img src="assets/gifs/velo2.gif?v=20250919"
-                 alt="6DOF pose estimation demo"
-                 class="w-full h-36 md:h-44 object-cover"
-                 loading="lazy" decoding="async">
+            <video src="assets/gifs/velo2.mp4" autoplay muted loop playsinline
+                 class="w-full h-36 md:h-44 object-cover"></video>
           </div>
         </div>
 
@@ -432,10 +453,8 @@
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-            <img src="assets/gifs/slam-velo.gif?v=20250919"
-                 alt="Visual-inertial SLAM demo"
-                 class="w-full h-36 md:h-44 object-cover"
-                 loading="lazy" decoding="async">
+            <video src="assets/gifs/slam-velo.mp4" autoplay muted loop playsinline
+                 class="w-full h-36 md:h-44 object-cover"></video>
           </div>
         </div>
 
@@ -450,10 +469,8 @@
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-            <img src="assets/gifs/velo3.gif?v=20250919"
-                 alt="Semantic segmentation demo"
-                 class="w-full h-36 md:h-44 object-cover"
-                 loading="lazy" decoding="async">
+            <video src="assets/gifs/velo3.mp4" autoplay muted loop playsinline
+                 class="w-full h-36 md:h-44 object-cover"></video>
           </div>
         </div>
 
@@ -468,10 +485,8 @@
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-            <img src="assets/gifs/simu_velo.gif?v=20250919"
-                 alt="Simulation demo"
-                 class="w-full h-36 md:h-44 object-cover"
-                 loading="lazy" decoding="async">
+            <video src="assets/gifs/simu_velo.mp4" autoplay muted loop playsinline
+                 class="w-full h-36 md:h-44 object-cover"></video>
           </div>
         </div>
 
@@ -486,10 +501,8 @@
             </ul>
           </div>
           <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-            <img src="assets/gifs/goa_velo.gif?v=20250919"
-                 alt="On-site deployment demo"
-                 class="w-full h-36 md:h-44 object-cover"
-                 loading="lazy" decoding="async">
+            <video src="assets/gifs/goa_velo.mp4" autoplay muted loop playsinline
+                 class="w-full h-36 md:h-44 object-cover"></video>
           </div>
         </div>
 
@@ -518,10 +531,8 @@
           </ul>
         </div>
         <div class="rounded-lg overflow-hidden ring-2 ring-[rgba(62,47,47,0.06)] bg-white">
-          <img src="assets/gifs/drdo_point.gif?v=20250919"
-               alt="DRDO IRSTD"
-               class="w-full h-36 md:h-44 object-cover"
-               loading="lazy" decoding="async">
+          <video src="assets/gifs/drdo_point.mp4" autoplay muted loop playsinline
+               class="w-full h-36 md:h-44 object-cover"></video>
         </div>
       </div>
     </div>
@@ -538,7 +549,7 @@
 
         <!-- Project Card (example repeated for others) -->
         <article class="project-card panel">
-          <img src="assets/gifs/velo1.gif?v=20250919" alt="SLAM System" class="media-16-9">
+          <video src="assets/gifs/velo1.mp4" autoplay muted loop playsinline alt="SLAM System" class="media-16-9"></video>
           <div class="card-padded">
             <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">Robust Plane Segmentation for 3D Pose Estimation</h3>
             <p class="muted mb-4">Geometry-first plane segmentation module that runs in real-time to support high precision pose estimation pipelines.</p>
@@ -551,7 +562,7 @@
         </article>
 
         <article class="project-card panel" data-aos="fade-up" data-aos-delay="80">
-          <img src="assets/gifs/crane.gif?v=20250919" alt="Crane Hook Pose Tracker" class="media-16-9">
+          <video src="assets/gifs/crane.mp4" autoplay muted loop playsinline class="media-16-9"></video>
           <div class="card-padded">
             <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">6-DoF Pose Tracker for Crane Hooks</h3>
             <p class="muted mb-4">Plug-and-play smart box for tracking crane hook position & orientation (hackathon project with L&amp;T).</p>
@@ -588,7 +599,7 @@
         </article>
 
         <article class="project-card panel" data-aos="fade-up" data-aos-delay="80">
-          <img src="assets/gifs/ransac.gif?v=20250919" alt="Ground Plane Segmentation" class="media-16-9">
+          <video src="assets/gifs/ransac.mp4" autoplay muted loop playsinline class="media-16-9"></video>
           <div class="card-padded">
             <h3 class="text-xl font-bold mb-2" style="color:var(--accent)">Efficient RANSAC Ground Plane Segmentation</h3>
             <p class="muted mb-4">IMU-aided RANSAC algorithm that reduces computation and improves real-time performance for ground plane detection.</p>
@@ -698,7 +709,7 @@
       <div class="blog-grid">
         <!-- Repeat these 6 placeholders and update href/src/text as needed -->
         <article class="panel overflow-hidden">
-          <img src="assets/blog/slam1.gif" alt="Article image 1" class="w-full h-40 object-cover">
+          <video src="assets/blog/slam1.mp4" autoplay muted loop playsinline class="w-full h-40 object-cover"></video>
           <div class="p-4">
             <h3 class="font-semibold">Hands on SLAM Frontend: Landmark Lifecycle</h3>
             <p class="muted text-sm mt-1">In Part 1, I walked through my early experiments with feature detection, matching, and triangulation. I asked a question: if triangulation works so well, why not just keep doing it forever between consecutive frames? ... </p>
@@ -716,7 +727,7 @@
         </article>
 
         <article class="panel overflow-hidden">
-          <img src="assets/blog/svd.gif" alt="Article image 3" class="w-full h-40 object-cover">
+          <video src="assets/blog/svd.mp4" autoplay muted loop playsinline class="w-full h-40 object-cover"></video>
           <div class="p-4">
             <h3 class="font-semibold">Demystifying SVD: The Math Powering Visual SLAM</h3>
             <p class="muted text-sm mt-1">Singular Value Decomposition sounds intimidating, but it’s actually one of the most powerful and practical tools that helps robots understand what they’re seeing. Think of it as a mathematical Swiss Army knife that solves many of the core problems in robot vision...</p>
@@ -725,7 +736,7 @@
         </article>
 
         <article class="panel overflow-hidden">
-          <img src="assets/blog/epipolar.gif" alt="Article image 4" class="w-full h-40 object-cover">
+          <video src="assets/blog/epipolar.mp4" autoplay muted loop playsinline class="w-full h-40 object-cover"></video>
           <div class="p-4">
             <h3 class="font-semibold">Epipolar Geometry in Practice: Build, Visualize, Understand</h3>
             <p class="muted text-sm mt-1">I built a tiny C++/OpenCV repo you can run locally to feel epipolar geometry instead of just reading about it...</p>
@@ -743,7 +754,7 @@
         </article>
 
         <article class="panel overflow-hidden">
-          <img src="assets/blog/planeseg.gif" alt="Article image 6" class="w-full h-40 object-cover">
+          <video src="assets/blog/planeseg.mp4" autoplay muted loop playsinline class="w-full h-40 object-cover"></video>
           <div class="p-4">
             <h3 class="font-semibold">Building a Robust Plane Segmentation Pipeline for 3D Pose Estimation in Robotics</h3>
             <p class="muted text-sm mt-1">When working on industrial automation systems, flashy CV models and deep learning pipelines often get the spotlight. But sometimes, it’s the quieter, lower-level problems — like reliably extracting a plane from a noisy point cloud — that make or break a robotic system...</p>
@@ -788,31 +799,14 @@
         </div>
 
         <div data-aos="fade-left">
-          <!-- enhanced contact form with client validation and inline success msg -->
-          <!-- Recommended: replace action with Formspree/Netlify endpoint for production. -->
-          <form id="contactForm" method="POST" class="space-y-4 panel p-4">
-            <div>
-              <label for="name" class="block text-sm font-medium mb-1" style="color:var(--text)">Name</label>
-              <input id="name" name="name" type="text" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required />
+          <div class="panel p-6 space-y-4">
+            <h3 class="text-xl font-semibold" style="color:var(--accent)">Let's Connect</h3>
+            <p class="muted">The best way to reach me is via email or LinkedIn — I typically respond within a day or two.</p>
+            <div class="flex flex-col gap-3">
+              <a href="mailto:sramasushil@ucsd.edu" class="btn btn-primary">Email Me <i data-feather="mail" class="ml-2"></i></a>
+              <a href="https://www.linkedin.com/in/siddharth-rs/" target="_blank" rel="noopener" class="btn btn-secondary">Connect on LinkedIn <i data-feather="linkedin" class="ml-2"></i></a>
             </div>
-
-            <div>
-              <label for="email" class="block text-sm font-medium mb-1" style="color:var(--text)">Email</label>
-              <input id="email" name="email" type="email" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required />
-            </div>
-
-            <div>
-              <label for="message" class="block text-sm font-medium mb-1" style="color:var(--text)">Message</label>
-              <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 rounded-md border border-transparent focus:ring-2 focus:ring-[var(--accent)]" required></textarea>
-            </div>
-
-            <div id="formStatus" class="text-sm" aria-live="polite" role="status"></div>
-
-            <div class="flex gap-3">
-              <button type="submit" class="btn btn-primary">Send Message <i data-feather="send" class="ml-2"></i></button>
-              <a href="mailto:sramasushil@ucsd.edu" class="btn btn-secondary">Or Email Directly</a>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -858,29 +852,25 @@
       mobileClose?.addEventListener('click', closeMobile);
       overlayHit?.addEventListener('click', closeMobile);
 
-      // Contact form validation and fake submit (replace with real endpoint)
-      const form = document.getElementById('contactForm');
-      const status = document.getElementById('formStatus');
-      form?.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        status.textContent = '';
-        const email = form.email.value.trim();
-        const name = form.name.value.trim();
-        const msg = form.message.value.trim();
-        const validEmail = /.+@.+\..+/.test(email);
-        if(!name || !validEmail || !msg){
-          status.textContent = 'Please provide a valid name, email and message.';
-          return;
-        }
-        // Simulate success — replace with fetch() to your form backend
-        status.textContent = 'Sending...';
-        setTimeout(()=>{ status.textContent = 'Thanks — your message has been received. I will respond within a few days.'; form.reset(); }, 900);
-      });
-
       // Small accessibility: trap focus in mobile nav when open (simple)
       document.addEventListener('keydown', (ev)=>{
         if(ev.key === 'Escape') closeMobile();
       });
+
+      // Active nav highlight on scroll
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            navLinks.forEach(link => {
+              link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+            });
+          }
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      sections.forEach(s => observer.observe(s));
 
     });
   </script>
